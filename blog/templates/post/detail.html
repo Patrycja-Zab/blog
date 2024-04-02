@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <p class="date">
+    Opublikowany {{ post.publish }} przez {{ post.author }}
+  </p>
+  {{ post.body|linebreaks }}
+  <p>
+    <a href='{% url "blog:post_share" post.id %}'>
+      Chcesz udostępnić ten post?
+  </a>
+
+  <h4>Lista komentarzy</h4>
+  <div class="comments-list">
+  {% if post.comments.count > 0 %}
+    {% for comment in comments %}
+      <div class="comment">
+          <p class="info">
+            Opublikowany {{ post.create }} przez {{ post.nick }}
+          </p>
+          <p class="content">
+            {{ comment.content }}
+          </p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>Brak komentarzy.</p>
+  {% endif %}
+  </div>
+
+  <h4>Dodaj komentarz</h4>
+  <div>
+    <form method="post" action="{% url 'blog:add_comment' post_id=post.id %}">
+      {{ comment_form.as_p }}
+      {% csrf_token %}
+      <input type="submit" value="Dodaj komentarz">
+    </form>
+    <br class="clear" />
+  </div>
+  <a href="{% url 'blog:post_list' %}">&lt; powrót</a>
+{% endblock %}
